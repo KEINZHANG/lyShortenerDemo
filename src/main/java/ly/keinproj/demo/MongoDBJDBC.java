@@ -77,7 +77,7 @@ public class MongoDBJDBC {
         MongoClient mongoClient = new MongoClient("localhost", 27017);
 
         database = mongoClient.getDatabase("urlDB");
-        collection = database.getCollection("test");
+        collection = database.getCollection("tests");
 
         System.out.println("Connecting database...");
         System.out.println(collection.count() + " urls in database");
