@@ -1,15 +1,45 @@
-var express = require('express'),
-    list = require('./request.js').Request; // see  template
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
 
-var app = express.createServer();
+// 创建 application/x-www-form-urlencoded 编码解析
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-app.use(express.static(__dirname + '/public')); // exposes index.html, per below
+app.use(express.static('public'));
 
-app.get('/request', function(req, res){
-    // run your request.js script
-    // when index.html makes the ajax call to www.yoursite.com/request, this runs
-    // you can also require your request.js as a module (above) and call on that:
-    res.send(list.getList()); // try res.json() if getList() returns an object or array
-});
+app.get('/index.htm', function (req, res) {
+    res.sendFile( __dirname + "/" + "index.htm" );
+})
 
-app.listen(80);
+app.post('/process_post', urlencodedParser, function (req, res) {
+
+    var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+    var regex = new RegExp(expression);
+    var t = req.body.URL;
+
+    if (t.match(regex)) {
+        //alert("Successful match");
+        var response = {
+            "LONG URL":req.body.URL,
+            // "last_name":req.body.last_name
+        };
+    } else {
+        //alert("Successful match");
+        var response = 'INVALID URL!'
+            // "last_name":req.body.last_name
+
+    }
+    console.log(response);
+    res.end(JSON.stringify(response));
+})
+
+var server = app.listen(8081, function () {
+
+    var host = server.address().address
+    var port = server.address().port
+
+    console.log("应用实例，访问地址为 http://%s:%s", host, port)
+
+})
+
+
